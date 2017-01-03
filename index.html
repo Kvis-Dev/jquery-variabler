@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title data-var="test" data-function="text">TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div class="local">
+            <var>ololo</var>
+        </div>
+
+        <var>ololo</var>
+
+        <br />
+
+        <input type="text" data-var="ololo" />
+        <input type="text" data-var="test" />
+        <input type="text" data-var="test" />
+        <var>test</var>
+        len of test: <var>test.length</var>
+<br/>
+        len of test: <var>test.length - 5</var>
+
+        <hr/>
+
+    <controller>main</controller>
+
+
+    <script type="text/javascript" src="js/jquery.js" ></script>
+    <script type="text/javascript" src="js/var.js" ></script>
+    <script type="text/javascript" src="js/controller.js" ></script>
+    <script>
+        $(function () {
+            var vars = $(document).var();
+            var varsLocal = $('.local').var();
+
+            vars.ololo = 8;
+
+            window.setTimeout(function () {
+                vars.ololo = 15;
+            }, 3000);
+
+            window.setTimeout(function () {
+                vars.ololo = 30;
+            }, 5000);
+
+            varsLocal.ololo = 5;
+
+            window.setTimeout(function () {
+                varsLocal.ololo = 20;
+            }, 3000);
+
+            vars.test = 'test text';
+
+
+            var mainController = function () {
+                var self = this;
+
+                self.vars = {};
+
+                self.template = '';
+                self.templateUrl = '/templates/main.html';
+
+                self.beforeTemplateLoad = function () {};
+                self.afterTemplateLoad = function () {};
+
+                self.init = function () {
+
+                    self.vars.controllerName = 5;
+
+                    window.setTimeout(function () {
+                        self.vars.controllerName = 20;
+                    }, 3000);
+
+                    var root = 'https://jsonplaceholder.typicode.com';
+//                    $.ajax({
+//                        url: root + '/posts/',
+//                        method: 'GET',
+//                    }).then(function (data) {
+//                        console.log(data);
+//                        self.vars.data = data;
+//                    });
+                };
+
+            };
+
+            $.controller('main', mainController);
+            
+            var vkController = function () {
+                
+            };
+            
+            $.controller('vk-controller', vkController);
+
+        });
+    </script>
+</body>
+</html>
