@@ -35,12 +35,9 @@ function jqControllers() {
         $('controller').each(function (k, v) {
             var vars = $(this).var();
 
-            var controllerName;
-
-            if ($(this).attr('data-var')) {
-                controllerName = $(this).attr('data-var');
-            } else {
-                controllerName = $(this).text();
+            if (!$(this).attr('data-controller')) {
+                var controllerName = $(this).text();
+                console.log('init', controllerName);
                 $(this).attr('data-controller', controllerName);
                 cObj.run($(this), controllerName);
             }

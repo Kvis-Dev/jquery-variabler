@@ -1,6 +1,19 @@
 $.jqKvisVariables = function ($selector) {
     var self = this;
 
+    $.jqKvisVariables.pipes = $.jqKvisVariables.pipes || {};
+
+    $.jqKvisVariables.addPipe = function (key, callback) {
+        if (callback instanceof Function) {
+            $.jqKvisVariables.pipes[key] = callback;
+        } else {
+            throw new Error('callback must be callable');
+        }
+    };
+    $.jqKvisVariables.removePipe = function (key) {
+        delete self.prototype.pipes[key];
+    };
+
     self.variables = {};
 
     self.fors = [];
@@ -8,19 +21,34 @@ $.jqKvisVariables = function ($selector) {
     self.selector = $selector;
 
     self.resolveVarForElement = function (elem, name) {
-        var variables = $(elem).var('get');
+        name = $.trim(name);
         
-        var nameParts = name.split('.');
-
+        var variables = $(elem).var('get');
+        var pipes = name.split('|');
+        var nameParts = pipes[0].split('.');
         var curval = variables.variables;
 
         for (var i = 0; i < nameParts.length; i++) {
-            curval = curval[nameParts[i]];
+            if (curval[nameParts[i]] instanceof Function) {
+                curval = curval[$.trim(nameParts[i])]();
+            } else {
+                curval = curval[$.trim(nameParts[i])];
+            }
+
             if (curval === undefined) {
                 return '';
             }
         }
-        
+
+        if (pipes.length > 1) {
+            for (var i = 1; i < pipes.length; i++) {
+                if ($.jqKvisVariables.pipes[pipes[i]] instanceof Function) {
+                    curval = $.jqKvisVariables.pipes[pipes[i]](curval, elem);
+                } else {
+                    console.error('pipe not found');
+                }
+            }
+        }
         return curval;
     };
 
@@ -136,17 +164,18 @@ $.jqKvisVariables = function ($selector) {
             self.renderVars();
         }
     });
-
-    $(document).on('change keyup', '[data-var]', function () {
-        var vars = $(this).var('get');
-        var varName = $(this).data('var');
-        if (!vars) {
-            return;
-        }
-        vars.proxy[varName] = $(this).val();
-    });
-
 }
+
+
+$(document).on('change keyup', '[data-var]', function () {
+    var vars = $(this).var('get');
+    var varName = $(this).data('var');
+    if (!vars) {
+        return;
+    }
+    vars.proxy[varName] = $(this).val();
+});
+
 
 $.fn.var = function (action) {
     action = action || 'create';

@@ -19,22 +19,27 @@
         <input type="text" data-var="test" />
         <input type="text" data-var="test" />
         <var>test</var>
+        <var>test|addslashes</var>
         len of test: <var>test.length</var>
-<br/>
-        len of test: <var>test.length - 5</var>
+        <br/>
+        len of test: <var>test.length</var>
 
         <hr/>
 
     <controller>main</controller>
 
-
     <script type="text/javascript" src="js/jquery.js" ></script>
     <script type="text/javascript" src="js/var.js" ></script>
     <script type="text/javascript" src="js/controller.js" ></script>
+    
     <script>
         $(function () {
             var vars = $(document).var();
             var varsLocal = $('.local').var();
+            
+            $.jqKvisVariables.addPipe('addslashes', function(value){
+                return value.split("'").join('\\\'').split('"').join("\\\"");
+            });
 
             vars.ololo = 8;
 
@@ -75,23 +80,23 @@
                     }, 3000);
 
                     var root = 'https://jsonplaceholder.typicode.com';
-//                    $.ajax({
-//                        url: root + '/posts/',
-//                        method: 'GET',
-//                    }).then(function (data) {
-//                        console.log(data);
-//                        self.vars.data = data;
-//                    });
+                    $.ajax({
+                        url: root + '/posts/',
+                        method: 'GET',
+                    }).then(function (data) {
+                        console.log(data);
+                        self.vars.data = data;
+                    });
                 };
 
             };
 
             $.controller('main', mainController);
-            
+
             var vkController = function () {
-                
+
             };
-            
+
             $.controller('vk-controller', vkController);
 
         });
